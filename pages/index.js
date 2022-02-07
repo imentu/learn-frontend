@@ -10,20 +10,20 @@ import {
 import { useState, useEffect } from "react";
 import { TiSocialTumbler, TiSocialTwitter } from "react-icons/ti";
 
-function Home() {
-  const [quote, setQuote] = useState("");
-  const [author, setAuthor] = useState("");
+const API_URL = "https://api.quotable.io/random";
+
+function Home({ data }) {
+  const [quote, setQuote] = useState(data.content);
+  const [author, setAuthor] = useState(data.author);
 
   const getQuote = () => {
-    fetch("https://api.quotable.io/random")
+    fetch(API_URL)
       .then((res) => res.json())
       .then((data) => {
         setQuote(data.content);
         setAuthor(data.author);
       });
   };
-
-  useEffect(getQuote, []);
 
   return (
     <Container
@@ -83,6 +83,17 @@ function Home() {
       </Card>
     </Container>
   );
+}
+
+export async function getStaticProps() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
 }
 
 export default Home;
